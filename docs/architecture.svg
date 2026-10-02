@@ -84,8 +84,8 @@
   <text x="815" y="380" text-anchor="middle" font-size="11" fill="#57606a">NodePort 30030</text>
 
   <!-- User traffic -->
-  <path d="M220,115 L260,115 L260,165 L298,165" fill="none" stroke="#1f6feb" stroke-width="2" marker-end="url(#a-blue)"/>
-  <text x="226" y="155" font-size="10" fill="#1f6feb" transform="rotate(-90 226 155)">minikube service</text>
+  <path d="M220,110 L470,110 L470,138" fill="none" stroke="#1f6feb" stroke-width="2" marker-end="url(#a-blue)"/>
+  <text x="478" y="128" font-size="11" fill="#1f6feb">minikube service</text>
   <path d="M130,450 L130,590 L815,590 L815,402" fill="none" stroke="#1f6feb" stroke-width="2" marker-end="url(#a-blue)"/>
   <text x="480" y="582" font-size="11" fill="#1f6feb">minikube service grafana -n monitoring</text>
 
@@ -95,7 +95,7 @@
 
   <!-- Metrics scrape -->
   <path d="M710,190 L642,290" fill="none" stroke="#d9822b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#a-orange)"/>
-  <text x="652" y="215" font-size="11" fill="#d9822b">scrape /metrics</text>
+  <text x="575" y="210" font-size="11" fill="#d9822b">scrape /metrics</text>
   <path d="M760,240 L760,280 L680,280 L680,470 L662,470" fill="none" stroke="#d9822b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#a-orange)"/>
   <text x="686" y="455" font-size="11" fill="#d9822b">scrape cAdvisor</text>
 
