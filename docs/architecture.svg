@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="640" viewBox="0 0 1000 640" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f6feb"/></marker>
+    <marker id="a-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d9822b"/></marker>
+    <marker id="a-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2da44e"/></marker>
+    <marker id="a-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#57606a"/></marker>
+  </defs>
+
+  <rect width="1000" height="640" fill="#ffffff"/>
+  <text x="500" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#24292f">Kubernetes-Based Application Deployment and Monitoring</text>
+
+  <!-- Laptop -->
+  <rect x="20" y="50" width="960" height="575" rx="10" fill="none" stroke="#8c959f" stroke-dasharray="6 4"/>
+  <text x="34" y="70" font-size="13" fill="#57606a">Developer laptop (Windows 11 + WSL2 + Docker Desktop)</text>
+
+  <!-- Left column: build path -->
+  <rect x="40" y="90" width="180" height="50" rx="6" fill="#f6f8fa" stroke="#57606a"/>
+  <text x="130" y="112" text-anchor="middle" font-size="13" font-weight="bold" fill="#24292f">You (browser)</text>
+  <text x="130" y="129" text-anchor="middle" font-size="11" fill="#57606a">opens the Flask app</text>
+
+  <rect x="40" y="190" width="180" height="50" rx="6" fill="#f6f8fa" stroke="#57606a"/>
+  <text x="130" y="212" text-anchor="middle" font-size="13" font-weight="bold" fill="#24292f">app/ + Dockerfile</text>
+  <text x="130" y="229" text-anchor="middle" font-size="11" fill="#57606a">source code in Git</text>
+
+  <rect x="40" y="290" width="180" height="50" rx="6" fill="#ddf4ff" stroke="#1f6feb"/>
+  <text x="130" y="312" text-anchor="middle" font-size="13" font-weight="bold" fill="#24292f">Docker image</text>
+  <text x="130" y="329" text-anchor="middle" font-size="11" fill="#57606a">flask-app:1.0.0</text>
+
+  <rect x="40" y="400" width="180" height="50" rx="6" fill="#f6f8fa" stroke="#57606a"/>
+  <text x="130" y="422" text-anchor="middle" font-size="13" font-weight="bold" fill="#24292f">You (browser)</text>
+  <text x="130" y="439" text-anchor="middle" font-size="11" fill="#57606a">opens Grafana</text>
+
+  <line x1="130" y1="240" x2="130" y2="288" stroke="#57606a" stroke-width="2" marker-end="url(#a-grey)"/>
+  <text x="138" y="268" font-size="11" fill="#57606a">docker build</text>
+
+  <!-- Cluster -->
+  <rect x="260" y="80" width="700" height="530" rx="10" fill="#f0f6ff" stroke="#1f6feb" stroke-width="1.5"/>
+  <text x="274" y="100" font-size="13" font-weight="bold" fill="#1f6feb">Minikube cluster (single node)</text>
+
+  <!-- Namespace default -->
+  <rect x="280" y="115" width="380" height="310" rx="8" fill="#ffffff" stroke="#8c959f" stroke-dasharray="4 3"/>
+  <text x="290" y="132" font-size="11" fill="#57606a">namespace: default</text>
+
+  <rect x="300" y="140" width="340" height="50" rx="6" fill="#ddf4ff" stroke="#1f6feb"/>
+  <text x="470" y="162" text-anchor="middle" font-size="13" font-weight="bold" fill="#24292f">Service: flask-app-service</text>
+  <text x="470" y="179" text-anchor="middle" font-size="11" fill="#57606a">NodePort 30080 - stable address + load balancing</text>
+
+  <rect x="300" y="220" width="340" height="145" rx="6" fill="#fff8c5" stroke="#bf8700"/>
+  <text x="310" y="238" font-size="12" font-weight="bold" fill="#24292f">Deployment: flask-app (replicas: 3)</text>
+
+  <g font-size="11" text-anchor="middle" fill="#24292f">
+    <rect x="315" y="250" width="100" height="100" rx="6" fill="#ffffff" stroke="#bf8700"/>
+    <text x="365" y="272" font-weight="bold">Pod 1</text><text x="365" y="290">Flask</text><text x="365" y="306">/health</text><text x="365" y="322">/metrics</text><text x="365" y="340" fill="#57606a">probes + limits</text>
+    <rect x="420" y="250" width="100" height="100" rx="6" fill="#ffffff" stroke="#bf8700"/>
+    <text x="470" y="272" font-weight="bold">Pod 2</text><text x="470" y="290">Flask</text><text x="470" y="306">/health</text><text x="470" y="322">/metrics</text><text x="470" y="340" fill="#57606a">probes + limits</text>
+    <rect x="525" y="250" width="100" height="100" rx="6" fill="#ffffff" stroke="#bf8700"/>
+    <text x="575" y="272" font-weight="bold">Pod 3</text><text x="575" y="290">Flask</text><text x="575" y="306">/health</text><text x="575" y="322">/metrics</text><text x="575" y="340" fill="#57606a">probes + limits</text>
+  </g>
+
+  <rect x="300" y="378" width="200" height="34" rx="6" fill="#f6f8fa" stroke="#57606a"/>
+  <text x="400" y="400" text-anchor="middle" font-size="11" fill="#24292f">ConfigMap: flask-app-config</text>
+
+  <line x1="470" y1="190" x2="365" y2="248" stroke="#1f6feb" stroke-width="2" marker-end="url(#a-blue)"/>
+  <line x1="470" y1="190" x2="470" y2="248" stroke="#1f6feb" stroke-width="2" marker-end="url(#a-blue)"/>
+  <line x1="470" y1="190" x2="575" y2="248" stroke="#1f6feb" stroke-width="2" marker-end="url(#a-blue)"/>
+
+  <!-- Node -->
+  <rect x="280" y="445" width="380" height="50" rx="6" fill="#ffffff" stroke="#57606a"/>
+  <text x="470" y="467" text-anchor="middle" font-size="13" font-weight="bold" fill="#24292f">Node: kubelet + cAdvisor</text>
+  <text x="470" y="484" text-anchor="middle" font-size="11" fill="#57606a">CPU and memory of every container</text>
+
+  <!-- Namespace monitoring -->
+  <rect x="690" y="115" width="250" height="310" rx="8" fill="#ffffff" stroke="#8c959f" stroke-dasharray="4 3"/>
+  <text x="700" y="132" font-size="11" fill="#57606a">namespace: monitoring</text>
+
+  <rect x="710" y="160" width="210" height="80" rx="6" fill="#fff1e5" stroke="#d9822b"/>
+  <text x="815" y="185" text-anchor="middle" font-size="13" font-weight="bold" fill="#24292f">Prometheus</text>
+  <text x="815" y="203" text-anchor="middle" font-size="11" fill="#57606a">pulls metrics every 15s</text>
+  <text x="815" y="220" text-anchor="middle" font-size="11" fill="#57606a">time-series DB - NodePort 30090</text>
+
+  <rect x="710" y="320" width="210" height="80" rx="6" fill="#dafbe1" stroke="#2da44e"/>
+  <text x="815" y="345" text-anchor="middle" font-size="13" font-weight="bold" fill="#24292f">Grafana</text>
+  <text x="815" y="363" text-anchor="middle" font-size="11" fill="#57606a">dashboards (provisioned)</text>
+  <text x="815" y="380" text-anchor="middle" font-size="11" fill="#57606a">NodePort 30030</text>
+
+  <!-- User traffic -->
+  <path d="M220,115 L260,115 L260,165 L298,165" fill="none" stroke="#1f6feb" stroke-width="2" marker-end="url(#a-blue)"/>
+  <text x="226" y="155" font-size="10" fill="#1f6feb" transform="rotate(-90 226 155)">minikube service</text>
+  <path d="M130,450 L130,590 L815,590 L815,402" fill="none" stroke="#1f6feb" stroke-width="2" marker-end="url(#a-blue)"/>
+  <text x="480" y="582" font-size="11" fill="#1f6feb">minikube service grafana -n monitoring</text>
+
+  <!-- Image load -->
+  <path d="M220,315 L298,315" fill="none" stroke="#57606a" stroke-width="2" marker-end="url(#a-grey)"/>
+  <text x="225" y="308" font-size="10" fill="#57606a">image load</text>
+
+  <!-- Metrics scrape -->
+  <path d="M710,190 L642,290" fill="none" stroke="#d9822b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#a-orange)"/>
+  <text x="652" y="215" font-size="11" fill="#d9822b">scrape /metrics</text>
+  <path d="M760,240 L760,280 L680,280 L680,470 L662,470" fill="none" stroke="#d9822b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#a-orange)"/>
+  <text x="686" y="455" font-size="11" fill="#d9822b">scrape cAdvisor</text>
+
+  <!-- PromQL -->
+  <line x1="860" y1="320" x2="860" y2="242" stroke="#2da44e" stroke-width="2" marker-end="url(#a-green)"/>
+  <text x="866" y="285" font-size="11" fill="#2da44e">PromQL</text>
+
+  <!-- Legend -->
+  <g font-size="11" fill="#24292f">
+    <line x1="290" y1="525" x2="330" y2="525" stroke="#1f6feb" stroke-width="2"/><text x="338" y="529">user traffic</text>
+    <line x1="430" y1="525" x2="470" y2="525" stroke="#d9822b" stroke-width="2" stroke-dasharray="6 4"/><text x="478" y="529">Prometheus pull (scrape)</text>
+    <line x1="640" y1="525" x2="680" y2="525" stroke="#2da44e" stroke-width="2"/><text x="688" y="529">Grafana query</text>
+    <line x1="790" y1="525" x2="830" y2="525" stroke="#57606a" stroke-width="2"/><text x="838" y="529">build / ship</text>
+  </g>
+</svg>
