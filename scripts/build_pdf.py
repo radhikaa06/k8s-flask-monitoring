@@ -1,14 +1,16 @@
 """Build the study-guide PDF from the Markdown docs and the source files.
 
-DRY: the PDF has no content of its own. It renders docs/*.md and appends the real
-source files, so it can never drift from the repository. Rebuild after any change:
+DRY: the PDFs have no content of their own. They render docs/*.md and append the
+real source files, so they can never drift from the repository. Rebuild after any change:
 
     pip install reportlab svglib
-    python scripts/build_pdf.py
+    python scripts/build_pdf.py            # every edition
+    python scripts/build_pdf.py hinglish   # one edition (see EDITIONS)
 """
 import datetime
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 from reportlab.lib import colors
@@ -25,8 +27,27 @@ from reportlab.platypus.tableofcontents import TableOfContents
 from svglib.svglib import svg2rlg
 
 ROOT = Path(__file__).resolve().parent.parent
-OUTPUT = ROOT / "docs" / "k8s-flask-monitoring-guide.pdf"
-CHAPTERS = ["docs/guide.md", "docs/troubleshooting.md", "docs/interview-prep.md"]
+TITLE = "Kubernetes-Based Application Deployment and Monitoring"
+EDITIONS = {
+    "english": {
+        "output": "docs/k8s-flask-monitoring-guide.pdf",
+        "chapters": ["docs/guide.md", "docs/troubleshooting.md", "docs/interview-prep.md"],
+        "subtitle": "Study guide: build, operate, monitor, troubleshoot and explain the project",
+        "contents": "Contents",
+        "appendix": ("Appendix - Source Files",
+                     "Every file below is included directly from the repository, so it always matches "
+                     "the code you run. The guide chapters explain why each part exists."),
+    },
+    "hinglish": {
+        "output": "docs/k8s-flask-monitoring-guide-hinglish.pdf",
+        "chapters": sorted(str(p.relative_to(ROOT)) for p in (ROOT / "docs" / "hinglish").glob("*.md")),
+        "subtitle": "Hinglish study guide: basics se lekar interview tak, sab kuch",
+        "contents": "Vishay Suchi (Contents)",
+        "appendix": ("Appendix - Poora Source Code",
+                     "Neeche ki har file seedha repository se li gayi hai, isliye yeh hamesha asli code se "
+                     "match karti hai. Har file ka matlab Part 5 mein samjhaya gaya hai."),
+    },
+}
 SOURCE_FILES = [
     "app/config.py", "app/app.py", "app/gunicorn.conf.py", "app/requirements.txt",
     "Dockerfile", ".dockerignore",
@@ -134,7 +155,7 @@ class Heading(Paragraph):
 
     def __init__(self, text, level):
         self.level = level
-        super().__init__(inline(text), S[f"h{level + 1}"])
+        super().__init__(inline(text), S[f"h{min(level, 2) + 1}"])
         self.toc_text = text.replace("`", "")
 
 
@@ -162,10 +183,12 @@ def code_block(lines):
 
 
 def md_table(rows):
-    cells = [[c.strip() for c in row.strip().strip("|").split("|")] for row in rows]
+    # Split on "|" but not on an escaped "\|" (a literal pipe inside a cell).
+    cells = [[c.strip().replace(r"\|", "|") for c in re.split(r"(?<!\\)\|", row.strip().strip("|"))]
+             for row in rows]
     header, body = cells[0], [r for r in cells[2:]]
     widths = [max(len(r[i]) if i < len(r) else 0 for r in cells[:1] + body) for i in range(len(header))]
-    widths = [min(max(w, 6), 60) for w in widths]
+    widths = [min(max(w, 10), 60) for w in widths]
     col_w = [CONTENT_W * w / sum(widths) for w in widths]
     data = [[Paragraph(inline(c), S["cellhead"]) for c in header]]
     data += [[Paragraph(inline(c), S["cell"]) for c in r] for r in body]
@@ -216,7 +239,7 @@ def markdown(path):
             story += md_table(lines[i:j])
             i = j
             continue
-        heading = re.match(r"(#{1,3}) (.+)", stripped)
+        heading = re.match(r"(#{1,4}) (.+)", stripped)
         image_ref = re.match(r"!\[[^\]]*\]\(([^)]+)\)", stripped)
         bullet = re.match(r"[-*] (.+)", stripped)
         numbered = re.match(r"(\d+)\. (.+)", stripped)
@@ -261,7 +284,7 @@ def decorate(canvas, doc):
     canvas.saveState()
     canvas.setFont(FONTS["Body"], 8)
     canvas.setFillColor(MUTED)
-    canvas.drawString(MARGIN, 10 * mm, "Kubernetes-Based Application Deployment and Monitoring")
+    canvas.drawString(MARGIN, 10 * mm, TITLE)
     canvas.drawRightString(PAGE_W - MARGIN, 10 * mm, f"Page {doc.page}")
     canvas.setStrokeColor(RULE)
     canvas.line(MARGIN, 13 * mm, PAGE_W - MARGIN, 13 * mm)
@@ -276,15 +299,15 @@ def git_author():
         return ""
 
 
-def cover():
+def cover(edition):
     author = git_author()
     story = [
         Spacer(1, 30 * mm),
-        Paragraph("Kubernetes-Based Application Deployment and Monitoring", S["cover_title"]),
+        Paragraph(TITLE, S["cover_title"]),
         Spacer(1, 6 * mm),
         Paragraph("Docker &middot; Minikube &middot; Prometheus &middot; Grafana &middot; Python Flask", S["cover_sub"]),
         Spacer(1, 4 * mm),
-        Paragraph("Study guide: build, operate, monitor, troubleshoot and explain the project", S["cover_sub"]),
+        Paragraph(edition["subtitle"], S["cover_sub"]),
         Spacer(1, 14 * mm),
         image(ROOT / "docs" / "architecture.svg", max_h=110 * mm),
         Spacer(1, 14 * mm),
@@ -295,19 +318,18 @@ def cover():
     return story
 
 
-def contents():
+def contents(edition):
     toc = TableOfContents()
     toc.levelStyles = [
         style("toc0", fontName=FONTS["Body-Bold"], fontSize=11, leading=16, spaceBefore=6),
         style("toc1", fontSize=9.5, leading=13, leftIndent=14),
     ]
-    return [Paragraph("Contents", S["toc_title"]), toc, PageBreak()]
+    return [Paragraph(edition["contents"], S["toc_title"]), toc, PageBreak()]
 
 
-def appendix():
-    story = [Heading("Appendix - Source Files", 0),
-             Paragraph("Every file below is included directly from the repository, so it always matches "
-                       "the code you run. The guide chapters explain why each part exists.", S["body"])]
+def appendix(edition):
+    title, intro = edition["appendix"]
+    story = [Heading(title, 0), Paragraph(intro, S["body"])]
     for rel in SOURCE_FILES:
         text = (ROOT / rel).read_text(encoding="utf-8")
         first, *rest = code_block(text.splitlines())
@@ -315,18 +337,20 @@ def appendix():
     return story
 
 
-def build():
-    story = cover() + contents()
-    for chapter in CHAPTERS:
+def build(name):
+    edition = EDITIONS[name]
+    story = cover(edition) + contents(edition)
+    for chapter in edition["chapters"]:
         story += markdown(ROOT / chapter) + [PageBreak()]
-    story += appendix()
-    doc = GuideDoc(str(OUTPUT), pagesize=A4, leftMargin=MARGIN, rightMargin=MARGIN,
+    story += appendix(edition)
+    output = ROOT / edition["output"]
+    doc = GuideDoc(str(output), pagesize=A4, leftMargin=MARGIN, rightMargin=MARGIN,
                    topMargin=MARGIN, bottomMargin=20 * mm,
-                   title="Kubernetes-Based Application Deployment and Monitoring - Study Guide",
-                   author=git_author())
+                   title=f"{TITLE} - Study Guide ({name})", author=git_author())
     doc.multiBuild(story, onFirstPage=decorate, onLaterPages=decorate)
-    print(f"Wrote {OUTPUT.relative_to(ROOT)}")
+    print(f"Wrote {output.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
-    build()
+    for edition_name in sys.argv[1:] or EDITIONS:
+        build(edition_name)

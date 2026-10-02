@@ -45,7 +45,7 @@ Linux, Python Flask, Gunicorn, Docker, Kubernetes, Minikube, Kubernetes YAML, Pr
 │   ├── deploy.sh             build + load image + deploy everything
 │   ├── load.sh               generate traffic inside the cluster
 │   ├── teardown.sh           remove everything
-│   └── build_pdf.py          builds the study guide PDF from docs/
+│   └── build_pdf.py          builds the PDFs from docs/
 ├── tests/                    pytest: app + manifest checks
 ├── docs/                     guide, troubleshooting, interview prep, diagram
 ├── Dockerfile
@@ -85,7 +85,11 @@ python -m pytest
 | [Build guide](docs/guide.md) | All 10 phases step by step. Every command with what, why, where, expected output and common errors |
 | [Troubleshooting](docs/troubleshooting.md) | The get/describe/logs/events/exec method and an error catalogue |
 | [Interview prep](docs/interview-prep.md) | Concept answers, follow-up questions and a resume-ready description |
-| `docs/k8s-flask-monitoring-guide.pdf` | All of the above plus the source code in one PDF (`python scripts/build_pdf.py`) |
+| [Hinglish guide](docs/hinglish/) | Everything from the basics (networking, Linux, Docker, Kubernetes, monitoring) to interview prep, in Hinglish |
+| `docs/k8s-flask-monitoring-guide.pdf` | English guide + troubleshooting + interview prep + source code in one PDF |
+| `docs/k8s-flask-monitoring-guide-hinglish.pdf` | The Hinglish guide + source code in one PDF |
+
+Both PDFs are generated from these Markdown files with `python scripts/build_pdf.py`.
 
 ## Failure experiments
 
