@@ -1,0 +1,12 @@
+# Only app/ is needed in the image. Excluding the rest keeps the build context small.
+.git
+.venv
+**/__pycache__
+.pytest_cache
+tests
+docs
+k8s
+monitoring
+scripts
+*.md
+*.pdf
