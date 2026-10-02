@@ -1,0 +1,6 @@
+# Keep monitoring tools separate from the application.
+# Files in this folder are numbered so `kubectl apply -f monitoring/` creates the namespace first.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
