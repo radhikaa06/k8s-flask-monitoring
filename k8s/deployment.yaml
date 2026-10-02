@@ -1,0 +1,60 @@
+# Deployment = "keep N identical pods of this image running, and replace any that die".
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+  labels:
+    app: flask-app
+spec:
+  replicas: 3
+  # The Deployment owns every pod whose labels match this selector.
+  selector:
+    matchLabels:
+      app: flask-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0 # never drop below 3 ready pods during an update
+      maxSurge: 1 # create at most 1 extra pod while updating
+  # Template = the blueprint for each pod.
+  template:
+    metadata:
+      labels:
+        app: flask-app # must match spec.selector above
+      annotations:
+        prometheus.io/scrape: "true" # tells our Prometheus config to scrape this pod
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: flask-app
+          # Single source of truth for the image tag: scripts/deploy.sh reads it from here.
+          image: flask-app:1.0.0
+          imagePullPolicy: IfNotPresent # use the image loaded into Minikube; don't pull from Docker Hub
+          ports:
+            - name: http # everything below refers to the port by this name, not the number
+              containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: flask-app-config
+          resources:
+            requests: # what the scheduler reserves for the pod
+              cpu: 100m # 0.1 CPU core
+              memory: 64Mi
+            limits: # hard ceiling: CPU is throttled, memory over the limit = OOMKilled
+              cpu: 250m
+              memory: 128Mi
+          # Readiness: "can this pod receive traffic right now?" Fails -> removed from the Service.
+          readinessProbe:
+            httpGet: &health-check # YAML anchor: define the check once...
+              path: /health
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            failureThreshold: 3
+          # Liveness: "is this container still alive?" Fails -> kubelet restarts the container.
+          livenessProbe:
+            httpGet: *health-check # ...and reuse it here (DRY)
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3

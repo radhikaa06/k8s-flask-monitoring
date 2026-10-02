@@ -1,0 +1,16 @@
+# Service = one stable name/IP in front of the changing set of pods, with load balancing.
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app-service
+  labels:
+    app: flask-app
+spec:
+  type: NodePort # reachable from outside the cluster on <node-ip>:30080
+  selector:
+    app: flask-app # send traffic to every READY pod with this label
+  ports:
+    - name: http
+      port: 80 # port inside the cluster: http://flask-app-service
+      targetPort: http # the container's named port (5000)
+      nodePort: 30080 # port on the Minikube node (allowed range 30000-32767)

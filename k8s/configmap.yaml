@@ -1,0 +1,9 @@
+# Non-secret configuration, kept outside the image so it can change without a rebuild.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flask-app-config
+  labels:
+    app: flask-app
+data:
+  APP_ENV: minikube
